@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: workshop
+  name: mongodb-svc
+spec:
+  selector:
+    app: mongodb                   # Ensure the label matches your MongoDB deployment
+  ports:
+  - name: mongodb-svc
+    protocol: TCP
+    port: 27017                     # Expose the service on port 27017
+    targetPort: 27017               # Redirect traffic to MongoDB container port
+  type: ClusterIP               # Expose the service externally via LoadBalancer

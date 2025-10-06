@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: workshop
+  labels:
+    role: api
+    env: demo
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      role: api
+  template:
+    metadata:
+      labels:
+        role: api
+    spec:
+      containers:
+        - name: api
+          image: eatherv/api  # Ensure the image is accessible from the public repository
+          imagePullPolicy: Always
+          env:
+            - name: MONGO_CONN_STR
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-sec  # Refers to the secret created above
+                  key: connection_string  # Refers to the key in the secret containing the connection string
+          ports:
+            - containerPort: 5001  # Correctly placed under the ports section
+          livenessProbe:
+            httpGet:
+              path: /ok
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ok
+              port: 5001
+            initialDelaySeconds: 10
