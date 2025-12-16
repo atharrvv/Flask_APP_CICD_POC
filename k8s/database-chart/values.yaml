@@ -1,0 +1,65 @@
+namespace: "workshop"
+
+
+#Deployment
+deployment:
+  name: "mongodb"
+  replicas: 2
+  image: "mongo:4.4.6"
+
+app:
+  labels: "mongodb"
+
+#Environment
+env:
+  username_variable: "MONGO_INITDB_ROOT_USERNAME"
+  password_variable: "MONGO_INITDB_ROOT_PASSWORD"
+key:
+  username: "username"
+  password: "password"
+
+
+#resources
+request:
+  memory: "256Mi"
+  cpu: "250m"
+limits:
+  memory: "512Mi"
+  cpu: "500m"
+
+#Volumes
+volumes:
+  name: "mongo-volume"
+  pvcname: "mongo-volume-claim-new"
+
+
+#Service
+service:
+  name: "mongodb-svc"
+  type: "ClusterIP"
+
+
+
+
+#permission
+access: "ReadWriteOnce"
+
+#Persistant Volume Claim
+pvc:
+  name: "mongo-volume-claim-new"
+  storage: "2Gi"
+
+#Persistant Volume
+pv:
+  name: "mongo-pv"
+  storage: "2Gi"
+  path: /data/db
+
+#Secrets
+secret:
+  name: "mongo-sec"
+  type: "Opaque"
+  password: cGFzc3dvcmQxMjM=
+  username: YWRtaW4=
+  connectionstring: bW9uZ29kYjovL2FkbWluOnBhc3N3b3JkMTIzQG1vbmdkYi1zdmM6MjcwMTcvdG9kbz9hdXRoU291cmNlPWFkbWlu
+

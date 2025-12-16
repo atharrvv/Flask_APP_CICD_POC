@@ -1,0 +1,23 @@
+
+
+namespace: "workshop"
+
+replicas: 2
+
+
+
+
+#Deployment
+deployment:
+  image: "eatherv/app"
+  labels: "frontend"
+  type: "RollingUpdate"
+
+
+
+#Service
+service:
+  type: "LoadBalancer"
+  port: 5002
+  target: 5002
+  

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployment.labels }}
+  namespace: {{ .Values.namespace }}  # Update to the correct namespace
+spec:
+  ports:
+    - port: {{ .Values.service.port }}               # Expose the service on port 5002
+      targetPort: {{ .Values.service.target }}        # Redirect traffic to port 5002 in the container
+      protocol: TCP
+  type: {{ .Values.service.type }}            # Expose the service externally
+  selector:
+    role: {{ .Values.deployment.labels }}              # Ensure this label matches your deployment

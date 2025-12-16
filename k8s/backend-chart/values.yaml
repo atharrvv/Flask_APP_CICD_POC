@@ -1,0 +1,23 @@
+namespace: "workshop" 
+replicas: "3"
+
+#Deployment
+deployment:
+  image: "eatherv/api"
+  app: "api"
+
+
+#Environment
+env:
+  name: "MONGO_CONN_STR"
+  secret_name: "mongo-sec"
+  secret_key: "connection_string"
+
+
+
+
+#Service
+service:
+  type: "LoadBalancer"
+
+
