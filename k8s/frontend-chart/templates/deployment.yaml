@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.labels }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    role: {{ .Values.deployment.labels }}
+    env: demo
+spec: 
+  replicas: {{ .Values.replicas }}
+  strategy:
+    type: {{ .Values.deployment.type }}
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels: 
+      role: {{ .Values.deployment.labels }}
+  template:
+    metadata:
+      labels:
+        role: {{ .Values.deployment.labels }}
+    spec: 
+      containers:
+      - name: {{ .Values.deployment.labels }}
+        image:  {{ .Values.deployment.image }} # Space added after colon
+        imagePullPolicy: Always
+        ports: 
+        - containerPort: 5002

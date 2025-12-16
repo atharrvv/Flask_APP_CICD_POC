@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: {{ .Values.namespace }}
+  labels:
+    role: {{ .Values.deployment.app }}
+    env: demo
+spec:
+  replicas: {{ .Values.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      role: {{ .Values.deployment.app }}
+  template:
+    metadata:
+      labels:
+        role: {{ .Values.deployment.app }}
+    spec:
+      containers:
+        - name: {{ .Values.deployment.app }}
+          image: {{ .Values.deployment.image }}  # Ensure the image is accessible from the public repository
+          imagePullPolicy: Always
+          env:
+            - name: {{ .Values.env.name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.secret_name }}  # Refers to the secret created above
+                  key: {{ .Values.env.secret_key }}  # Refers to the key in the secret containing the connection string
+          ports:
+            - containerPort: 5001  # Correctly placed under the ports section
+          livenessProbe:
+            httpGet:
+              path: /ok
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ok
+              port: 5001
+            initialDelaySeconds: 10

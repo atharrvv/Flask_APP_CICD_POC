@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace  }}
+  name: {{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.labels }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.labels }}
+    spec:
+      containers:
+      - name: mongodb
+        image: {{ .Values.deployment.image }}
+        command:
+          - "mongod"
+          - "--bind_ip"
+          - "0.0.0.0"
+        ports:
+        - containerPort: 27017
+        env:
+        - name: {{ .Values.env.username_variable }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secret.name }}
+              key: {{ .Values.key.username }}
+        - name: {{ .Values.env.password_variable }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secret.name }}
+              key: {{ .Values.key.password }}
+        volumeMounts:
+        - name: mongo-volume
+          mountPath: /data/db
+        resources:
+          requests:
+            memory: {{ .Values.request.memory }}
+            cpu: {{ .Values.request.cpu }}
+          limits:
+            memory: {{ .Values.limits.memory }}
+            cpu: {{ .Values.limits.cpu }}
+      volumes:
+      - name: {{ .Values.volumes.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volumes.pvcname }}
