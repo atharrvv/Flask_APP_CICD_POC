@@ -12,12 +12,13 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
-  imageName: 'backend'
+  imageBackendName: 'backend'
+  imageFrontendName: 'frontend'
   latestTag: 'latest'
 
 stages:
-- stage: Build
-  displayName: Build image
+- stage: BakcendBuild
+  displayName: Backend Build Image
   jobs:
   - job: Build
     displayName: Build
@@ -29,6 +30,23 @@ stages:
       inputs:
         command: build
         dockerfile: '$(Build.SourcesDirectory)/api/Dockerfile'
-        repository: $(imageName)
+        repository: $(imageBackendName)
+        tags: |
+          $(tag)
+
+- stage: FrontendBuild
+  displayName: Frontend Build Image
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      name: D-Agent-Pool
+    steps:
+    - task: Docker@2
+      displayName: Build an Frontend image
+      inputs:
+        command: build
+        Dockerfile: '$(Build.SourcesDirectory)/app/Dockerfile'
+        repository: '$(nameFrontendImage)'
         tags: |
           $(tag)
