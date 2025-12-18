@@ -29,7 +29,6 @@ stages:
       inputs:
         command: build
         dockerfile: '$(Build.SourcesDirectory)/api/Dockerfile'
+        repository: $(imageName)
         tags: |
-          $(imageName)
-          $(latestTag)
           $(tag)
