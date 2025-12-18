@@ -2,6 +2,8 @@
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
+
+
 trigger:
 - main
 
@@ -10,6 +12,8 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  imageName: 'backend'
+  latestTag: 'latest'
 
 stages:
 - stage: Build
@@ -26,4 +30,6 @@ stages:
         command: build
         dockerfile: '$(Build.SourcesDirectory)/api/Dockerfile'
         tags: |
+          $(imageName)
+          $(latestTag)
           $(tag)
