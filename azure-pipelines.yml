@@ -11,7 +11,8 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag1: '$(Build.BuildId)'
+  tag2: '$(Build.BuildId)'
   imageBackendName: 'backend'
   imageFrontendName: 'frontend'
   latestTag: 'latest'
@@ -32,7 +33,7 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/api/Dockerfile'
         repository: $(imageBackendName)
         tags: |
-          $(tag)
+          $(tag1)
 
 - stage: FrontendBuild
   displayName: Frontend Build Image
@@ -49,4 +50,4 @@ stages:
         Dockerfile: '$(Build.SourcesDirectory)/app/Dockerfile'
         repository: '$(nameFrontendImage)'
         tags: |
-          $(tag)
+          $(tag2)
