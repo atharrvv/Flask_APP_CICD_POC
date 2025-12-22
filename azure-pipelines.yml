@@ -11,9 +11,11 @@ resources:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '0577f99a-2e6d-4f2d-9a3f-a3b79c16f4c4'
-  imageRepository: 'backend'
+  imageBackendRepository: 'backend'
+  imageFrontendRepository: 'frontend'
   containerRegistry: 'drgistry.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/api/Dockerfile'
+  backenddockerfilePath: '$(Build.SourcesDirectory)/api/Dockerfile'
+  frontenddockerfilepath: '$(Build.sourcesDirecotry)/app/Dockerfile'
   tag: '$(Build.BuildId)'
 
   # Agent VM image name
@@ -33,8 +35,27 @@ stages:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        repository: $(imageRepository)
+        repository: $(imageBackendRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+
+- stage: FrontendBuild
+  displayName: Frontend Build and push stage
+  jobs:
+    - job: Build
+      displayName: Build
+      pool:
+        name: D-Agent-Pool
+
+      steps:
+      - task: Docker@2
+        displayName: Build and Push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: $(imageFrontendRepository)
+          dockerfile: $(frontenddockerfilepath)
+          containerRegistry: $(dockerRegistryServiceConnection)
+          tags: |
+            $(tag)
