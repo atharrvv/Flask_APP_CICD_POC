@@ -35,11 +35,11 @@ stages:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        repository: $(imageBackendRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: '$(imageBackendRepository)'
+        dockerfile: '$(dockerfilePath)'
+        containerRegistry: '$(dockerRegistryServiceConnection)'
         tags: |
-          $(tag)
+          '$(tag)'
 
 - stage: FrontendBuild
   displayName: Frontend Build and push stage
@@ -58,4 +58,4 @@ stages:
           dockerfile: $(frontenddockerfilepath)
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
-            $(tag)
+            '$(tag)'
