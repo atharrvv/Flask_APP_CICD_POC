@@ -48,6 +48,6 @@ stages:
       inputs:
         command: build
         Dockerfile: '$(Build.SourcesDirectory)/app/Dockerfile'
-        repository: '$(imageFrontendImage)'
+        repository: '$(imageFrontendName)'
         tags: |
           $(tag)
