@@ -1,0 +1,83 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '0577f99a-2e6d-4f2d-9a3f-a3b79c16f4c4'
+  imageBackendRepository: 'backend'
+  imageFrontendRepository: 'frontend'
+  containerRegistry: 'drgistry.azurecr.io'
+  backenddockerfilePath: '$(Build.SourcesDirectory)/api/Dockerfile'
+  frontenddockerfilepath: '$(Build.SourcesDirectory)/app/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+
+
+stages:
+- stage: BackendBuild
+  displayName: Backend Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      name: D-Agent-Pool
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: '$(imageBackendRepository)'
+        dockerfile: '$(backenddockerfilePath)'
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        tags: |
+          $(tag)
+
+- stage: FrontendBuild
+  displayName: Frontend Build and push stage
+  jobs:
+    - job: Build
+      displayName: Build
+      pool:
+        name: D-Agent-Pool
+      steps:
+      - task: Docker@2
+        displayName: Build and Push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: $(imageFrontendRepository)
+          dockerfile: $(frontenddockerfilepath)
+          containerRegistry: $(dockerRegistryServiceConnection)
+          tags: |
+            $(tag)
+
+
+
+
+
+# stages:
+#   - stage: commnad
+#     displayName: command
+#     jobs:
+#     - job: Command
+#       displayName: Build
+#       pool:
+#         name: D-Agent-Pool
+
+#       steps:
+#       - task: Bash@3
+#         inputs:
+#           targetType: 'inline'
+#           script: |
+#             # Write your commands here
+
+#             ls $(frontenddockerfilepath)
