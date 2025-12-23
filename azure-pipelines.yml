@@ -22,40 +22,59 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: BackendBuild
-  displayName: Backend Build and push stage
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      name: D-Agent-Pool
-      
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: '$(imageBackendRepository)'
-        dockerfile: '$(dockerfilePath)'
-        containerRegistry: '$(dockerRegistryServiceConnection)'
-        tags: |
-          '$(tag)'
-
-- stage: FrontendBuild
-  displayName: Frontend Build and push stage
-  jobs:
-    - job: Build
+  - stage: commnad
+    displayName: command
+    jobs:
+    - job: Command
       displayName: Build
       pool:
         name: D-Agent-Pool
 
       steps:
-      - task: Docker@2
-        displayName: Build and Push an image to container registry
+      - task: Bash@3
         inputs:
-          command: buildAndPush
-          repository: $(imageFrontendRepository)
-          dockerfile: $(frontenddockerfilepath)
-          containerRegistry: $(dockerRegistryServiceConnection)
-          tags: |
-            '$(tag)'
+          targetType: 'inline'
+          script: |
+            # Write your commands here
+
+            echo $(Build.SourcesDirectory)
+
+
+# stages:
+# - stage: BackendBuild
+#   displayName: Backend Build and push stage
+#   jobs:
+#   - job: Build
+#     displayName: Build
+#     pool:
+#       name: D-Agent-Pool
+      
+#     steps:
+#     - task: Docker@2
+#       displayName: Build and push an image to container registry
+#       inputs:
+#         command: buildAndPush
+#         repository: '$(imageBackendRepository)'
+#         dockerfile: '$(dockerfilePath)'
+#         containerRegistry: '$(dockerRegistryServiceConnection)'
+#         tags: |
+#           '$(tag)'
+
+# - stage: FrontendBuild
+#   displayName: Frontend Build and push stage
+#   jobs:
+#     - job: Build
+#       displayName: Build
+#       pool:
+#         name: D-Agent-Pool
+
+#       steps:
+#       - task: Docker@2
+#         displayName: Build and Push an image to container registry
+#         inputs:
+#           command: buildAndPush
+#           repository: $(imageFrontendRepository)
+#           dockerfile: $(frontenddockerfilepath)
+#           containerRegistry: $(dockerRegistryServiceConnection)
+#           tags: |
+#             '$(tag)'
