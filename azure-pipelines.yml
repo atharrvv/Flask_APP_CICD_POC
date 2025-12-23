@@ -37,7 +37,7 @@ stages:
           script: |
             # Write your commands here
 
-            echo $(Build.SourcesDirectory)
+            ls $(Build.SourcesDirectory)/api/
 
 
 # stages:
