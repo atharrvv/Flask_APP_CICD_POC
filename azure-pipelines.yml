@@ -40,7 +40,7 @@ stages:
         dockerfile: '$(backenddockerfilePath)'
         containerRegistry: '$(dockerRegistryServiceConnection)'
         tags: |
-          '$(tag)'
+          $(tag)
 
 - stage: FrontendBuild
   displayName: Frontend Build and push stage
@@ -58,7 +58,7 @@ stages:
           dockerfile: $(frontenddockerfilepath)
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
-            '$(tag)'
+            $(tag)
 
 
 
