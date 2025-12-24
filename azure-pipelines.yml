@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- azure-pipelines
+- Deploy
 
 resources:
 - repo: self
@@ -20,77 +20,80 @@ variables:
 
 
 
+# stages:
+#   - stage: Command
+#     displayName: Commmand
+#     jobs:
+#     - job: Command
+#       displayName: Command
+#       pool:
+#         name: D-Agent-Pool
+#       steps:
+#       - task: Bash@3
+#         inputs:
+#           targetType: 'inline'
+#           script: |
+#             # Write your commands here
+
+#             echo $(Pipeline.Workspace)
+#             echo $(imagePullSecret)
+
+
 stages:
-  - stage: Command
-    displayName: Commmand
-    jobs:
-    - job: Command
-      displayName: Command
-      pool:
-        name: D-Agent-Pool
-      steps:
-      - task: Bash@3
-        inputs:
-          targetType: 'inline'
-          script: |
-            # Write your commands here
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      name: D-Agent-Pool
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
 
-            echo $(Pipeline.Workspace)
-            echo $(imagePullSecret)
+    - upload: manifests
+      artifact: manifests
 
+- stage: Deploy
+  displayName: Deploy stage
+  # dependsOn: Build
 
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      name: D-Agent-Pool
+    environment: 'atharrvvFlaskAPPCICDPOC-1956.default'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
-# - stage: Build
-#   displayName: Build stage
-#   jobs:
-#   - job: Build
-#     displayName: Build
-#     pool:
-#       name: D-Agent-Pool
-#     steps:
-#     - task: Docker@2
-#       displayName: Build and push an image to container registry
-#       inputs:
-#         command: buildAndPush
-#         repository: $(imageRepository)
-#         dockerfile: $(dockerfilePath)
-#         containerRegistry: $(dockerRegistryServiceConnection)
-#         tags: |
-#           $(tag)
-
-#     - upload: manifests
-#       artifact: manifests
-
-# - stage: Deploy
-#   displayName: Deploy stage
-#   # dependsOn: Build
-
-#   jobs:
-#   - deployment: Deploy
-#     displayName: Deploy
-#     pool:
-#       name: D-Agent-Pool
-#     environment: 'atharrvvFlaskAPPCICDPOC-1956.default'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-          # - task: KubernetesManifest@0
-          #   displayName: Create imagePullSecret
-          #   inputs:
-          #     action: createSecret
-          #     secretName: $(imagePullSecret)
-          #     dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-          # - task: KubernetesManifest@0
-          #   displayName: Deploy to Kubernetes cluster
-          #   inputs:
-          #     action: deploy
-          #     manifests: |
-          #       $(Pipeline.Workspace)/manifests/deployment.yml
-          #       $(Pipeline.Workspace)/manifests/service.yml
-          #     imagePullSecrets: |
-          #       $(imagePullSecret)
-          #     containers: |
-          #       $(containerRegistry)/$(imageRepository):$(tag)
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                $(Pipeline.Workspace)/k8s/database/secrets.yaml
+                $(Pipeline.Workspace)/k8s/database/pvc.yaml
+                $(Pipeline.Workspace)/k8s/database/pv.yaml
+                $(Pipeline.Workspace)/k8s/database/deployment.yaml
+                $(Pipeline.Workspace)/k8s/database/service.yaml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
 
