@@ -101,5 +101,5 @@ stages:
               script: |
                 # Write your commands here
 
-                echo $(Pipeline.Workspace)
+                echo $(Build.SourcesDirectory)
 
