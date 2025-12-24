@@ -70,26 +70,26 @@ stages:
           #     dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
 
 
-          # - task: KubernetesManifest@1
-          #   displayName: Deploy to Kubernetes cluster
-          #   inputs:
-          #     action: 'deploy'
-          #     kubernetesServiceConnection: 'D-Cluster-workshop'
-          #     namespace: 'workshop'
-          #     manifests: |
-          #       $(Pipeline.Workspace)/k8s/database/secrets.yaml
-          #       $(Pipeline.Workspace)/k8s/database/pvc.yaml
-          #       $(Pipeline.Workspace)/k8s/database/pv.yaml
-          #       $(Pipeline.Workspace)/k8s/database/deployment.yaml
-          #       $(Pipeline.Workspace)/k8s/database/service.yaml
-          #     containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-          #     imagePullSecrets: '$(imagePullSecret)'
-          
-          - task: Kubernetes@1
+          - task: KubernetesManifest@1
+            displayName: Deploy to Kubernetes cluster
             inputs:
-              connectionType: 'Kubernetes Service Connection'
-              kubernetesServiceEndpoint: 'D-Cluster-workshop'
-              command: 'create'
-              arguments: 'namespace new'
-              secretType: 'dockerRegistry'
-              containerRegistryType: 'Azure Container Registry'
+              action: 'deploy'
+              kubernetesServiceConnection: 'D-Cluster-workshop'
+              namespace: 'workshop'
+              manifests: |
+                $(Pipeline.Workspace)/k8s/database/secrets.yaml
+                $(Pipeline.Workspace)/k8s/database/pvc.yaml
+                $(Pipeline.Workspace)/k8s/database/pv.yaml
+                $(Pipeline.Workspace)/k8s/database/deployment.yaml
+                $(Pipeline.Workspace)/k8s/database/service.yaml
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+              imagePullSecrets: '$(imagePullSecret)'
+          
+          # - task: Kubernetes@1
+          #   inputs:
+          #     connectionType: 'Kubernetes Service Connection'
+          #     kubernetesServiceEndpoint: 'D-Cluster-workshop'
+          #     command: 'create'
+          #     arguments: 'namespace new'
+          #     secretType: 'dockerRegistry'
+          #     containerRegistryType: 'Azure Container Registry'
