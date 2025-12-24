@@ -82,15 +82,6 @@ stages:
           #       $(Pipeline.Workspace)/k8s/database/service.yaml
           #     containers: '$(containerRegistry)/$(imageRepository):$(tag)'
           #     imagePullSecrets: '$(imagePullSecret)'
-          
-          # - task: Kubernetes@1
-          #   inputs:
-          #     connectionType: 'Kubernetes Service Connection'
-          #     kubernetesServiceEndpoint: 'D-Cluster-workshop'
-          #     command: 'create'
-          #     arguments: 'namespace new'
-          #     secretType: 'dockerRegistry'
-          #     containerRegistryType: 'Azure Container Registry'
 
 
           - task: Bash@3
@@ -98,5 +89,5 @@ stages:
               targetType: 'inline'
               script: |
                 # Write your commands here
-                ls $(Build.SourcesDirectory)/k8s/
+                ls $(Pipeline.Workspace)/k8s/
 
