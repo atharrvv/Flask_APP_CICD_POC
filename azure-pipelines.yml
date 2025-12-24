@@ -100,6 +100,5 @@ stages:
               targetType: 'inline'
               script: |
                 # Write your commands here
-
-                ls $(Build.SourcesDirectory)
+                ls $(Build.SourcesDirectory)/k8s/
 
