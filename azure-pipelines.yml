@@ -68,26 +68,26 @@ stages:
           #     dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
 
 
-          # - task: KubernetesManifest@1
-          #   displayName: Deploy to Kubernetes cluster
-          #   inputs:
-          #     action: 'deploy'
-          #     kubernetesServiceConnection: 'D-Cluster-workshop'
-          #     namespace: 'workshop'
-          #     manifests: |
-          #       $(Pipeline.Workspace)/k8s/database/secrets.yaml
-          #       $(Pipeline.Workspace)/k8s/database/pvc.yaml
-          #       $(Pipeline.Workspace)/k8s/database/pv.yaml
-          #       $(Pipeline.Workspace)/k8s/database/deployment.yaml
-          #       $(Pipeline.Workspace)/k8s/database/service.yaml
-          #     containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-          #     imagePullSecrets: '$(imagePullSecret)'
-
-
-          - task: Bash@3
+          - task: KubernetesManifest@1
+            displayName: Deploy to Kubernetes cluster
             inputs:
-              targetType: 'inline'
-              script: |
-                # Write your commands here
-                ls $(Pipeline.Workspace)
+              action: 'deploy'
+              kubernetesServiceConnection: 'D-Cluster-workshop'
+              namespace: 'workshop'
+              manifests: |
+                $(Build.SourcesDirectory)/k8s/database/secrets.yaml
+                $(Build.SourcesDirectory)/k8s/database/pvc.yaml
+                $(Build.SourcesDirectory)/k8s/database/pv.yaml
+                $(Build.SourcesDirectory)/k8s/database/deployment.yaml
+                $(Build.SourcesDirectory)/k8s/database/service.yaml
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+              imagePullSecrets: '$(imagePullSecret)'
+
+
+          # - task: Bash@3
+          #   inputs:
+          #     targetType: 'inline'
+          #     script: |
+          #       # Write your commands here
+          #       ls $(Pipeline.Workspace)
 
