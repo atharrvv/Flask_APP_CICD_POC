@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: atharrvvflaskappcicdpoc 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: atharrvvflaskappcicdpoc
+  template:
+    metadata:
+      labels:
+        app: atharrvvflaskappcicdpoc 
+    spec:
+      containers:
+        - name: atharrvvflaskappcicdpoc 
+          image: drgistry.azurecr.io/atharrvvflaskappcicdpoc
+          ports:
+          - containerPort: 5001
