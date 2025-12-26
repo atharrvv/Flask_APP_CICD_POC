@@ -75,6 +75,8 @@ stages:
               kubernetesServiceConnection: 'D-Cluster-workshop'
               namespace: 'workshop'
               manifests: |
+                $(Build.SourcesDirectory)/k8s/database/clusterRole.yaml
+                $(Build.SourcesDirectory)/k8s/database/clusterRoleBinding.yaml
                 $(Build.SourcesDirectory)/k8s/database/secrets.yaml
                 $(Build.SourcesDirectory)/k8s/database/pvc.yaml
                 $(Build.SourcesDirectory)/k8s/database/pv.yaml
